@@ -165,7 +165,7 @@ async def set_commands(app):
 
 # === Main ===
 def main():
-   import asyncio  # add this at the top if not already
+   import asyncio  # move this to the top of your file
 
 async def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
