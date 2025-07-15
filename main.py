@@ -16,7 +16,7 @@ import aiohttp
 import random
 
 # === Configuration ===
-BOT_TOKEN = "7783908047:AAF9KwNaCkhXPNw2SFRPD8y2KwfmwJDkJg0"
+BOT_TOKEN = "7783908047:AAHyyd6kxXWHVo4kAulyKOJH5qjKWKuMHDs"
 API_KEY = "4aa5eec74aac408c958f286503d3c5c6"
 CONTRACT_ADDRESS = "0x25b9076dcd51f64ae556a40e3416fd1d4aabb730"
 
