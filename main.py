@@ -18,8 +18,12 @@ import aiohttp
 import random
 
 # === Configuration ===
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
-API_KEY = os.environ.get("API_KEY")
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+API_KEY = os.getenv("API_KEY")
 CONTRACT_ADDRESS = "0x25b9076dcd51f64ae556a40e3416fd1d4aabb730"
 
 logging.basicConfig(level=logging.INFO)
