@@ -1,3 +1,7 @@
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 import logging
 import os
 import random
@@ -141,6 +145,7 @@ async def main():
 
     await set_commands(app)
     print("✅ Bot is running...")
+    logging.info("Polling started...")
     await app.run_polling()
 
 # Replit-safe asyncio
