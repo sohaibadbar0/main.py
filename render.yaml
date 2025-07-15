@@ -7,6 +7,6 @@ services:
     startCommand: python main.py
     envVars:
       - key: BOT_TOKEN
-        value: 7783908047:AAHDGNHCwbS9lAcvW8nAfbiSxuohknwheak  # Replace with real if needed
+        value: 7783908047:AAHDGNHCwbS9lAcvW8nAfbiSxuohknwheak
       - key: API_KEY
         value: 4aa5eec74aac408c958f286503d3c5c6
