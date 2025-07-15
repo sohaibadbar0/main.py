@@ -1,13 +1,9 @@
 import logging
 import os
 import random
-import asyncio
 import aiohttp
+import asyncio
 from dotenv import load_dotenv
-
-import telegram
-print("✅ Telegram Bot Library Version:", telegram.__version__)
-
 from telegram import (
     Update,
     InlineKeyboardButton,
@@ -27,59 +23,46 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 API_KEY = os.getenv("API_KEY")
 CONTRACT_ADDRESS = "0x25b9076dcd51f64ae556a40e3416fd1d4aabb730"
 
+# === Logging ===
 logging.basicConfig(level=logging.INFO)
 
-# === Sample NFT images for demo ===
 NFT_IMAGES = [
     "https://ipfs.raribleuserdata.com/ipfs/bafybeica5pnqglknw52frn36tfdvydnp7llpohz7x5lqmpys2ll3fhtk34/image.png",
     "https://ipfs.raribleuserdata.com/ipfs/bafybeigbhbmuzhejjxiy3267j3fcgf33vxjoubwp6ipkdzwhmrxj6jpbsi/image.png",
 ]
 
-# === /start ===
+# === Bot commands ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("🎮 Launch Mini Game", url="https://t.me/Pandooverse_bot/Pandooverse")],
         [InlineKeyboardButton("🖼 Show Random NFT", callback_data='random_nft')],
         [InlineKeyboardButton("🌐 Explore Links", callback_data='show_links')],
     ]
-    markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
-        "🎉 Welcome to *PANDOO-VERSE*!",
-        reply_markup=markup,
-        parse_mode="Markdown"
-    )
+    await update.message.reply_text("🎉 Welcome to *PANDOO-VERSE*!", reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="Markdown")
 
-# === /help ===
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🛠 *Available Commands:*\n"
         "/start - Show menu\n"
-        "/nft <token_id> - View metadata of a Pandoo NFT\n"
-        "/price <collection_slug> - Check collection floor price\n"
-        "/about - Project description\n"
-        "/links - Explore collections",
+        "/nft <token_id> - View NFT metadata\n"
+        "/price <slug> - Check floor price\n"
+        "/about - Project info\n"
+        "/links - Explore collection",
         parse_mode="Markdown"
     )
 
-# === /about ===
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🐼 *PANDOO-VERSE* is a story-rich NFT universe powered by pandas, traits, and token battles.\n"
-        "🔗 Explore more: https://pandooverse.x.rarible.com/",
-        parse_mode="Markdown"
-    )
+    await update.message.reply_text("🐼 *PANDOO-VERSE* is an NFT world of panda warriors and traits.\n🔗 https://pandooverse.x.rarible.com", parse_mode="Markdown")
 
-# === /links ===
 async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [InlineKeyboardButton("🌐 Website", url="https://pandooverse.x.rarible.com/")],
         [InlineKeyboardButton("📦 OpenSea", url="https://opensea.io/collection/pandooverse")],
         [InlineKeyboardButton("🧙 Magic Eden", url="https://magiceden.io/u/BambooLabs")],
-        [InlineKeyboardButton("🖼 Rarible", url="https://rarible.com/pandoo-verse")]
+        [InlineKeyboardButton("🖼 Rarible", url="https://rarible.com/pandoo-verse")],
     ]
-    await update.message.reply_text("🔗 Explore more:", reply_markup=InlineKeyboardMarkup(buttons))
+    await update.message.reply_text("🔗 Links:", reply_markup=InlineKeyboardMarkup(buttons))
 
-# === /nft <token_id> ===
 async def nft_metadata(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
         await update.message.reply_text("❗ Usage: `/nft <token_id>`", parse_mode="Markdown")
@@ -92,24 +75,23 @@ async def nft_metadata(update: Update, context: ContextTypes.DEFAULT_TYPE):
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as resp:
             if resp.status != 200:
-                await update.message.reply_text("❌ Couldn't fetch metadata. Check token ID or try later.")
+                await update.message.reply_text("❌ Couldn't fetch metadata.")
                 return
             data = await resp.json()
 
     nft = data.get("nft", {})
     name = nft.get("name", "Unnamed")
-    image = nft.get("image_url", "")
     desc = nft.get("description", "No description.")
+    image = nft.get("image_url", "")
     traits = nft.get("traits", [])
-    trait_list = "\n".join([f"- *{t['trait_type']}*: {t['value']}" for t in traits]) if traits else "No traits found."
+    trait_str = "\n".join([f"- *{t['trait_type']}*: {t['value']}" for t in traits]) if traits else "No traits."
 
-    caption = f"🎨 *{name}*\n\n🖼 {desc}\n\n🎯 *Traits:*\n{trait_list}"
-    await update.message.reply_photo(photo=image, caption=caption, parse_mode="Markdown")
+    caption = f"🎨 *{name}*\n\n🖼 {desc}\n\n🎯 *Traits:*\n{trait_str}"
+    await update.message.reply_photo(image, caption=caption, parse_mode="Markdown")
 
-# === /price <collection_slug> ===
 async def floor_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
-        await update.message.reply_text("❗ Usage: `/price <collection_slug>`", parse_mode="Markdown")
+        await update.message.reply_text("❗ Usage: `/price <slug>`", parse_mode="Markdown")
         return
 
     slug = context.args[0]
@@ -119,53 +101,34 @@ async def floor_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as resp:
             if resp.status != 200:
-                await update.message.reply_text("🚫 Invalid collection slug or API error.")
+                await update.message.reply_text("🚫 API error or invalid slug.")
                 return
             data = await resp.json()
-            stats = data.get("total", {})
 
+    stats = data.get("total", {})
     floor = stats.get("floor_price", "N/A")
     volume = stats.get("total_volume", "N/A")
+    await update.message.reply_text(f"📉 Floor Price: {floor}\n📈 Volume: {volume}", parse_mode="Markdown")
 
-    await update.message.reply_text(
-        f"📉 *Floor Price:* {floor}\n"
-        f"📈 *Total Volume:* {volume}\n"
-        f"🌐 Source: OpenSea",
-        parse_mode="Markdown"
-    )
-
-# === Random NFT (Button) ===
-async def random_nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    image = random.choice(NFT_IMAGES)
-    await query.message.reply_photo(
-        photo=image,
-        caption="🎲 Here's a random NFT from PANDOO-VERSE!",
-        parse_mode="Markdown"
-    )
-
-# === Button handler ===
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     if query.data == "show_links":
         await links(query, context)
     elif query.data == "random_nft":
-        await random_nft(update, context)
+        image = random.choice(NFT_IMAGES)
+        await query.message.reply_photo(image, caption="🎲 Here's a random NFT!", parse_mode="Markdown")
 
-# === Set bot commands ===
 async def set_commands(app):
     await app.bot.set_my_commands([
-        BotCommand("start", "Start the bot and view menu"),
-        BotCommand("help", "Show command help"),
-        BotCommand("about", "About Pandoo-Verse"),
-        BotCommand("links", "Explore collection links"),
-        BotCommand("nft", "Get NFT metadata"),
-        BotCommand("price", "Track collection floor price"),
+        BotCommand("start", "Start bot"),
+        BotCommand("help", "List commands"),
+        BotCommand("about", "About Pandoo"),
+        BotCommand("links", "View links"),
+        BotCommand("nft", "Fetch NFT metadata"),
+        BotCommand("price", "Check floor price"),
     ])
 
-# === Main entrypoint ===
 async def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
