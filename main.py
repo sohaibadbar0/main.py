@@ -1,3 +1,5 @@
+import telegram
+print("✅ Telegram Bot Library Version:", telegram.__version__)
 from telegram import (
     Update,
     InlineKeyboardButton,
