@@ -8,7 +8,7 @@ from telegram.ext import (
 import random
 
 # ✅ Your bot token
-BOT_TOKEN = "7783908047:AAF9KwNaCkhXPNw2SFRPD8y2KwfmwJDkJg0"
+BOT_TOKEN = "7783908047:AAHyyd6kxXWHVo4kAulyKOJH5qjKWKuMHDs"
 
 # ✅ Sample NFT images
 NFT_IMAGES = [
