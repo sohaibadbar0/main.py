@@ -1,3 +1,10 @@
+import logging
+import os
+import random
+import asyncio
+import aiohttp
+from dotenv import load_dotenv
+
 import telegram
 print("✅ Telegram Bot Library Version:", telegram.__version__)
 
@@ -7,30 +14,22 @@ from telegram import (
     InlineKeyboardMarkup,
     BotCommand,
 )
-
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
     CallbackQueryHandler,
     ContextTypes,
 )
-import logging
-import os
-import aiohttp
-import random
 
-# === Configuration ===
-from dotenv import load_dotenv
-
+# === Load environment variables ===
 load_dotenv()
-
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 API_KEY = os.getenv("API_KEY")
 CONTRACT_ADDRESS = "0x25b9076dcd51f64ae556a40e3416fd1d4aabb730"
 
 logging.basicConfig(level=logging.INFO)
 
-# === Sample NFT placeholders ===
+# === Sample NFT images for demo ===
 NFT_IMAGES = [
     "https://ipfs.raribleuserdata.com/ipfs/bafybeica5pnqglknw52frn36tfdvydnp7llpohz7x5lqmpys2ll3fhtk34/image.png",
     "https://ipfs.raribleuserdata.com/ipfs/bafybeigbhbmuzhejjxiy3267j3fcgf33vxjoubwp6ipkdzwhmrxj6jpbsi/image.png",
@@ -44,7 +43,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("🌐 Explore Links", callback_data='show_links')],
     ]
     markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("🎉 Welcome to *PANDOO-VERSE*!", reply_markup=markup, parse_mode="Markdown")
+    await update.message.reply_text(
+        "🎉 Welcome to *PANDOO-VERSE*!",
+        reply_markup=markup,
+        parse_mode="Markdown"
+    )
 
 # === /help ===
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -98,7 +101,6 @@ async def nft_metadata(update: Update, context: ContextTypes.DEFAULT_TYPE):
     image = nft.get("image_url", "")
     desc = nft.get("description", "No description.")
     traits = nft.get("traits", [])
-
     trait_list = "\n".join([f"- *{t['trait_type']}*: {t['value']}" for t in traits]) if traits else "No traits found."
 
     caption = f"🎨 *{name}*\n\n🖼 {desc}\n\n🎯 *Traits:*\n{trait_list}"
@@ -132,7 +134,7 @@ async def floor_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-# === Random NFT (demo) ===
+# === Random NFT (Button) ===
 async def random_nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -143,7 +145,7 @@ async def random_nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-# === Handle buttons ===
+# === Button handler ===
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -152,7 +154,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "random_nft":
         await random_nft(update, context)
 
-# === Register Telegram commands ===
+# === Set bot commands ===
 async def set_commands(app):
     await app.bot.set_my_commands([
         BotCommand("start", "Start the bot and view menu"),
@@ -163,10 +165,7 @@ async def set_commands(app):
         BotCommand("price", "Track collection floor price"),
     ])
 
-# === Main ===
-def main():
-   import asyncio  # move this to the top of your file
-
+# === Main entrypoint ===
 async def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
