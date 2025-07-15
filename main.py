@@ -63,8 +63,11 @@ async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("🌊 OpenSea", url="https://opensea.io/collection/pandooverse")],
         [InlineKeyboardButton("🪄 Magic Eden", url="https://magiceden.io/u/BambooLabs")],
         [InlineKeyboardButton("🖼 Rarible", url="https://rarible.com/pandoo-verse")],
+        [InlineKeyboardButton("📸 Instagram", url="https://www.instagram.com/labsbambooo")],
+        [InlineKeyboardButton("🐦 Twitter/X", url="https://x.com/GenesisDodo")],
+        [InlineKeyboardButton("📘 Facebook", url="https://www.facebook.com")],  # Replace with your actual FB URL
     ]
-    await update.message.reply_text("🌐 Links:", reply_markup=InlineKeyboardMarkup(buttons))
+    await update.message.reply_text("🔗 Explore the *Pandoo-Verse* ecosystem:", reply_markup=InlineKeyboardMarkup(buttons), parse_mode="Markdown")
 
 async def nft_metadata(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
