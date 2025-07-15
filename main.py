@@ -116,14 +116,46 @@ async def floor_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     volume = stats.get("total_volume", "N/A")
     await update.message.reply_text(f"💰 Floor Price: {floor}\n💵 Volume: {volume}", parse_mode="Markdown")
 
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def random_nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    if query.data == "show_links":
-        await links(query, context)
-    elif query.data == "random_nft":
-        image = random.choice(NFT_IMAGES)
-        await query.message.reply_photo(image, caption="🎲 Here's a random NFT!", parse_mode="Markdown")
+
+    url = f"https://api.opensea.io/api/v2/chain/polygon/contract/{CONTRACT_ADDRESS}/nfts?limit=20"
+    headers = {"X-API-KEY": API_KEY}
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers) as resp:
+            if resp.status != 200:
+                await query.message.reply_text("❌ Couldn't fetch NFTs.")
+                return
+            data = await resp.json()
+
+    nfts = data.get("nfts", [])
+    if not nfts:
+        await query.message.reply_text("⚠️ No NFTs found.")
+        return
+
+    nft = random.choice(nfts)
+    name = nft.get("name", "Unnamed")
+    image = nft.get("image_url", "")
+    token_id = nft.get("identifier")
+    traits = nft.get("traits", [])
+
+    # Get mood trait
+    mood = "Unknown"
+    for trait in traits:
+        if trait["trait_type"].lower() == "mood":
+            mood = trait["value"]
+            break
+
+    caption = f"🎨 *{name}*\n😊 *Mood:* {mood}\n\n🛒 Buy this NFT:"
+    buttons = [
+        [InlineKeyboardButton("🌊 OpenSea", url=f"https://opensea.io/assets/matic/{CONTRACT_ADDRESS}/{token_id}")],
+        [InlineKeyboardButton("🖼 Rarible", url=f"https://rarible.com/token/polygon/{CONTRACT_ADDRESS}:{token_id}")],
+        [InlineKeyboardButton("🪄 Magic Eden", url="https://magiceden.io/u/BambooLabs")]
+    ]
+
+    await query.message.reply_photo(photo=image, caption=caption, reply_markup=InlineKeyboardMarkup(buttons), parse_mode="Markdown")
 
 async def set_commands(app):
     await app.bot.set_my_commands([
