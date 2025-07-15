@@ -2,10 +2,11 @@ services:
   - type: web
     name: pandoo-verse-bot
     runtime: python
+    pythonVersion: 3.10  # <- Add this line
     buildCommand: pip install -r requirements.txt
     startCommand: python main.py
     envVars:
       - key: BOT_TOKEN
-        value: 7783908047:AAHDGNHCwbS9lAcvW8nAfbiSxuohknwheak
+        value: your_actual_token
       - key: API_KEY
-        value: 4aa5eec74aac408c958f286503d3c5c6
+        value: your_api_key
