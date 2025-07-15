@@ -150,10 +150,10 @@ async def main():
 
 # Replit-safe asyncio
 if __name__ == "__main__":
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(main())
-    except RuntimeError:
-        new_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(new_loop)
-        new_loop.run_until_complete(main())
+    import nest_asyncio
+    import asyncio
+
+    nest_asyncio.apply()  # Allows nested event loops (fix for Replit)
+    
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
