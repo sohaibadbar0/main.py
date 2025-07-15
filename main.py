@@ -1,11 +1,13 @@
 import telegram
 print("✅ Telegram Bot Library Version:", telegram.__version__)
+
 from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     BotCommand,
 )
+
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
