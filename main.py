@@ -8,7 +8,7 @@ from telegram.ext import (
 import random
 import os
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN") or "YOUR_BOT_TOKEN"
+BOT_TOKEN = os.environ.get("7783908047:AAEPjdxhHhjMOh381CeS32ynMUqnOx9Svgs")
 
 NFT_IMAGES = [
     "https://ipfs.raribleuserdata.com/ipfs/bafybeica5pnqglknw52frn36tfdvydnp7llpohz7x5lqmpys2ll3fhtk34/image.png",
