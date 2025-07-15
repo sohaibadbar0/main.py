@@ -1,4 +1,4 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, BotCommand 
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -22,10 +22,10 @@ NFTS = [
         "mood": "UNDEAD-VENGEANCE",
         "image": NFT_IMAGES[1],
         "links": {
-            "OpenSea": "https://opensea.io/item/matic/0x25b9076dcd51f64ae556a40e3416fd1d4aabb730/...",
-            "Magic Eden": "https://magiceden.io/u/BambooLabs?chains=%5B%22polygon%22%5D...",
-            "Rarible": "https://rarible.com/token/polygon/0x25b9076dcd51f64ae556a40...",
-            "Official Site": "https://pandooverse.x.rarible.com/token/POLYGON:..."
+            "OpenSea": "https://opensea.io/...",
+            "Magic Eden": "https://magiceden.io/...",
+            "Rarible": "https://rarible.com/...",
+            "Official Site": "https://pandooverse.x.rarible.com/..."
         }
     },
     {
@@ -33,10 +33,10 @@ NFTS = [
         "mood": "REVENGE SEEKING",
         "image": NFT_IMAGES[0],
         "links": {
-            "OpenSea": "https://opensea.io/item/matic/0x25b9076dcd51f64ae556a40...",
-            "Magic Eden": "https://magiceden.io/u/BambooLabs?chains=%5B%22polygon%22%5D...",
-            "Rarible": "https://rarible.com/token/polygon/0x25b9076dcd51f64ae556a40...",
-            "Official Site": "https://pandooverse.x.rarible.com/token/POLYGON:..."
+            "OpenSea": "https://opensea.io/...",
+            "Magic Eden": "https://magiceden.io/...",
+            "Rarible": "https://rarible.com/...",
+            "Official Site": "https://pandooverse.x.rarible.com/..."
         }
     }
 ]
@@ -82,11 +82,24 @@ async def show_links(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await query.message.reply_text(links_text, parse_mode='Markdown')
 
+
+# 👇 INSERT HERE 👇 — Register commands for Telegram UI
+async def set_commands(app):
+    await app.bot.set_my_commands([
+        BotCommand("start", "Start the bot and view options"),
+        BotCommand("info", "Show project info"),
+        BotCommand("buy", "How to buy Pandoo NFTs")
+    ])
+
+# Main bot setup
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(random_nft, pattern="random_nft"))
     app.add_handler(CallbackQueryHandler(show_links, pattern="show_links"))
+
+    app.post_init = set_commands  # ← ✅ Register commands
+
     print("✅ Bot is running...")
     app.run_polling()
 
