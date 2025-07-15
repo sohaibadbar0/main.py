@@ -1,5 +1,10 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update\
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, CallbackQueryHandler\
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    ContextTypes,
+    CallbackQueryHandler,
+)
 import random\
 \
 BOT_TOKEN = "7783908047:AAFoeBzu7qQGLHFmiehu3HswF0rJtZD2I08"\
