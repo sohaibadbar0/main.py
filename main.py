@@ -165,6 +165,9 @@ async def set_commands(app):
 
 # === Main ===
 def main():
+   import asyncio  # add this at the top if not already
+
+async def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -175,9 +178,9 @@ def main():
     app.add_handler(CommandHandler("price", floor_price))
     app.add_handler(CallbackQueryHandler(button_handler))
 
-    app.post_init = set_commands
+    await set_commands(app)
     print("✅ Bot is running...")
-    app.run_polling()
+    await app.run_polling()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
